@@ -62,6 +62,17 @@ services:
     volumes:
       - ./kafka-data3:/var/kafka/data
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    networks:
+      - my_network
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=Cluster_Infnet
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:9092,kafka2:9092,kafka3:9092
+
 networks:
   my_network:
     name: kafka-network
