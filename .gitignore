@@ -1,3 +1,5 @@
 # Ignorando os volumes locais do Kafka
 kafka-data*/
 venv/
+# Ignorando cache do Python
+__pycache__/
