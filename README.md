@@ -1,4 +1,4 @@
-# # Sistema de Telemetria de Delivery - Apache Kafka & KRaft
+## Sistema de Telemetria de Delivery - Apache Kafka & KRaft
 
 Este repositorio contem o projeto pratico final de Engenharia de Dados (Infnet 2026). O sistema simula uma operacao de delivery em tempo real, monitorando a geolocalizacao de entregadores e persistindo o estado atual em um banco de dados de alto desempenho.
 
