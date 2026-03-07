@@ -90,6 +90,11 @@ services:
   kafka-connect:
     image: confluentinc/cp-kafka-connect:7.5.0
     container_name: kafka-connect
+    restart: always
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
     ports:
       - "8083:8083"
     networks:
@@ -105,12 +110,10 @@ services:
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 3
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 3
-      # Configuramos para ler a Chave como String (Nome do Motoboy) e o Valor como JSON (As coordenadas)
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
-    # Esse comando magico instala o plugin de conexao do Redis antes de ligar a ponte!
     command:
       - bash
       - -c
@@ -141,10 +144,19 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
       - my_network
+    volumes: 
+      - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./monitoring/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./monitoring/dashboards/delivery-dashboard.json:/var/lib/grafana/dashboards/delivery-dashboard.json
 
   kafka-exporter:
     image: danielqsj/kafka-exporter:latest
     container_name: kafka-exporter
+    restart: always
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
     command:
       - --kafka.server=kafka1:9092
       - --kafka.server=kafka2:9092
