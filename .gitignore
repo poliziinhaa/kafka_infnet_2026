@@ -1,2 +1,3 @@
 # Ignorando os volumes locais do Kafka
 kafka-data*/
+venv/
