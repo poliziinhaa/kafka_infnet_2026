@@ -1,0 +1,69 @@
+{
+  "title": "Delivery Telemetry - Professional Monitor",
+  "uid": "delivery-pro-01",
+  "refresh": "5s",
+  "panels": [
+    {
+      "title": "Total de Mensagens",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "sum(kafka_topic_partition_current_offset{topic=\"delivery-positions\"})", "refId": "A" }],
+      "options": { "colorMode": "value", "graphMode": "area" }
+    },
+    {
+      "title": "Brokers Ativos",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "kafka_brokers", "refId": "A" }],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "red", "value": 0 }, { "color": "green", "value": 3 }]
+          }
+        }
+      }
+    },
+    {
+      "title": "Tamanho do Log (Bytes)",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "sum(kafka_topic_partition_current_offset - kafka_topic_partition_oldest_offset) * 100", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "decbytes" } }
+    },
+    {
+      "title": "Saúde da Replicação",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
+      "targets": [{ "expr": "sum(kafka_topic_partition_under_replicated_partition)", "refId": "A" }],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": 0 }, { "color": "red", "value": 1 }]
+          }
+        }
+      }
+    },
+    {
+      "title": "Velocidade de Ingestão (Mensagens/Seg)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "targets": [{ "expr": "sum(irate(kafka_topic_partition_current_offset{topic=\"delivery-positions\"}[1m]))", "legendFormat": "Velocidade", "refId": "A" }]
+    },
+    {
+      "title": "Distribuição por Partição",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "targets": [{ "expr": "sum(kafka_topic_partition_current_offset{topic=\"delivery-positions\"}) by (partition)", "legendFormat": "Partição {{partition}}", "refId": "A" }]
+    },
+    {
+      "title": "Atraso do Consumidor (Lag)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 14 },
+      "targets": [{ "expr": "sum(kafka_consumergroup_lag{topic=\"delivery-positions\"}) by (group)", "legendFormat": "Grupo: {{group}}", "refId": "A" }],
+      "description": "Se essa linha subir muito, o sistema está lento para processar as entregas!"
+    }
+  ],
+  "schemaVersion": 38
+}
